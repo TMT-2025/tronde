@@ -1,0 +1,32 @@
+{
+  "name": "exam-mixer-core",
+  "version": "1.0.0",
+  "description": "Enterprise Exam Mixer DOCX Parser & IR Engine",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/server/cli.js",
+    "export-json": "vitest run tests/parser/export-snapshot.test.ts"
+  },
+  "keywords": [
+    "exam",
+    "mixer",
+    "docx",
+    "parser",
+    "openxml"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "ISC",
+  "dependencies": {
+    "@xmldom/xmldom": "0.8.10",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

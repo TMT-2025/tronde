@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Test and runtime outputs
+output/sandbox/*
+!output/sandbox/.gitkeep
+tests/output/
+*.log
+
+# Vercel deployment artifacts
+.vercel/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db

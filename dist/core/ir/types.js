@@ -1,0 +1,5 @@
+/**
+ * EXAM INTERMEDIATE REPRESENTATION (IR) DEFINITIONS
+ * Conforms to 02_EXAM_IR_SPEC.md
+ */
+export {};

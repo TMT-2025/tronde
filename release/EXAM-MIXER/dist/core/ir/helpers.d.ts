@@ -1,0 +1,10 @@
+import { FormattedRun, RichContent, RichParagraph, ExamIR, ExamQuestion } from "./types.js";
+export declare function formattedRunToPlainText(run: FormattedRun): string;
+export declare function richParagraphToPlainText(p: RichParagraph): string;
+export declare function richContentToPlainText(content: RichContent): string;
+export declare function cloneFormattedRun(run: FormattedRun): FormattedRun;
+export declare function cloneRichParagraph(p: RichParagraph): RichParagraph;
+export declare function cloneRichContent(content: RichContent): RichContent;
+export declare function countQuestions(exam: ExamIR): number;
+export declare function getAllQuestions(exam: ExamIR): ExamQuestion[];
+export declare function getQuestionById(exam: ExamIR, questionId: string): ExamQuestion | undefined;
