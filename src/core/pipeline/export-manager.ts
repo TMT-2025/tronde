@@ -4,6 +4,7 @@ import JSZip from "jszip";
 import { BatchItemResult } from "./batch-generator.js";
 import { BatchAnswerKeyExport } from "./answer-key-generator.js";
 import { ExamManifest } from "./manifest-generator.js";
+import { generateAnswerKeyExcel } from "./excel-generator.js";
 
 export interface ExportOptions {
   outputDir: string;
@@ -17,6 +18,9 @@ export interface ExportResult {
   docxPaths: string[];
   answerKeyFileName: string;
   answerKeyPath: string;
+  excelFileName?: string;
+  excelPath?: string;
+  excelBuffer?: Uint8Array;
   manifestFileName: string;
   manifestPath: string;
   zipFileName?: string;
@@ -64,7 +68,15 @@ export async function executeExport(
     fs.writeFileSync(answerKeyPath, answerKeyStr, "utf8");
   }
 
-  // 3. Export EXAM_MANIFEST.json
+  // 3. Export Excel Answer Key (.xlsx)
+  const excelFileName = "DAP_AN_CAC_MA_DE.xlsx";
+  const excelPath = path.join(outputDir, excelFileName);
+  const excelBuffer = await generateAnswerKeyExcel(answerKeyData);
+  if (!skipDiskWrite) {
+    fs.writeFileSync(excelPath, excelBuffer);
+  }
+
+  // 4. Export EXAM_MANIFEST.json
   const manifestFileName = "EXAM_MANIFEST.json";
   const manifestPath = path.join(outputDir, manifestFileName);
   const manifestStr = JSON.stringify(manifestData, null, 2);
@@ -72,7 +84,7 @@ export async function executeExport(
     fs.writeFileSync(manifestPath, manifestStr, "utf8");
   }
 
-  // 4. Create ZIP package
+  // 5. Create ZIP package
   let zipFileName: string | undefined;
   let zipPath: string | undefined;
   let zipBuffer: Uint8Array | undefined;
@@ -89,6 +101,9 @@ export async function executeExport(
     for (const item of batchItems) {
       zip.file(`MA_DE_${item.examCode}.docx`, item.docxBytes);
     }
+
+    // Add Excel answer key
+    zip.file(excelFileName, excelBuffer);
 
     // Add JSON files
     zip.file(answerKeyFileName, answerKeyStr);
@@ -113,6 +128,9 @@ export async function executeExport(
     docxPaths,
     answerKeyFileName,
     answerKeyPath,
+    excelFileName,
+    excelPath,
+    excelBuffer,
     manifestFileName,
     manifestPath,
     zipFileName,

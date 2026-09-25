@@ -143,6 +143,14 @@ describe("UI & Server HTTP REST API Integration (TEST-UI-001)", () => {
     expect(zip.file("MA_DE_102.docx")).not.toBeNull();
     expect(zip.file("answer-key.json")).not.toBeNull();
     expect(zip.file("EXAM_MANIFEST.json")).not.toBeNull();
+    expect(zip.file("DAP_AN_CAC_MA_DE.xlsx")).not.toBeNull();
+
+    // 4.1 Download Answer Key Excel (.xlsx)
+    const excelRes = await fetch(`${baseUrl}/api/jobs/${job.id}/download/excel`);
+    expect(excelRes.status).toBe(200);
+    expect(excelRes.headers.get("content-type")).toContain("spreadsheetml.sheet");
+    const excelBuf = await excelRes.arrayBuffer();
+    expect(excelBuf.byteLength).toBeGreaterThan(1000);
 
     // 5. Download Answer Key
     const keyRes = await fetch(`${baseUrl}/api/jobs/${job.id}/download/answer-key`);

@@ -5,7 +5,7 @@ import { getExamMixerUiHtml } from "../ui/exam-mixer-ui.js";
 import { validateUploadedDocx, FileValidationError } from "../application/file-service.js";
 import { analyzeSourceDocx } from "../application/exam-generation-service.js";
 import { examJobService, JobValidationError } from "../application/exam-job-service.js";
-import { getJobZipBuffer, getJobAnswerKey, getJobManifest, ResultNotFoundError } from "../application/result-service.js";
+import { getJobZipBuffer, getJobExcelBuffer, getJobAnswerKey, getJobManifest, ResultNotFoundError } from "../application/result-service.js";
 /**
  * Parses request body (supporting both JSON and Multipart Form-Data)
  */
@@ -298,6 +298,19 @@ export async function handleExamMixerRequest(req, res) {
                 "Content-Type": "application/zip",
                 "Content-Disposition": `attachment; filename="${fileName}"`,
                 "Content-Length": buffer.length
+            });
+            res.end(buffer);
+            return;
+        }
+        // 7.1 Download Answer Key Excel
+        const excelMatch = pathname.match(/^\/api\/jobs\/([a-zA-Z0-9_-]+)\/download\/excel$/);
+        if (req.method === "GET" && excelMatch) {
+            const jobId = excelMatch[1];
+            const { buffer, fileName } = getJobExcelBuffer(jobId);
+            res.writeHead(200, {
+                "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Content-Disposition": `attachment; filename="${fileName}"`,
+                "Content-Length": buffer.byteLength
             });
             res.end(buffer);
             return;

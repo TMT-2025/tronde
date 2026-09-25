@@ -171,7 +171,10 @@ export async function executeJobPipeline(
       zipFileSize: zipStats ? zipStats.size : 0,
       answerKeyFileName: exportRes.answerKeyFileName,
       answerKeyFilePath: exportRes.answerKeyPath,
+      excelFileName: exportRes.excelFileName,
+      excelFilePath: exportRes.excelPath,
       manifestFileName: exportRes.manifestFileName,
+      manifestPath: exportRes.manifestPath,
       manifestFilePath: exportRes.manifestPath,
       examCodes: pipelineResult.batchItems.map(i => i.examCode),
       benchmarks: pipelineResult.benchmarks

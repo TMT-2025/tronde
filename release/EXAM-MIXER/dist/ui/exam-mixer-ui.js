@@ -171,15 +171,9 @@ export function getExamMixerUiHtml() {
             </div>
 
             <div>
-              <label class="block mb-1 font-semibold text-slate-800">Mã đề bắt đầu</label>
-              <input type="text" id="cfg-exam-code-start" value="101" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 mt-1">Ví dụ: 101, 201, 301,...</p>
-            </div>
-
-            <div>
-              <label class="block mb-1 font-semibold text-slate-800">Mã hạt giống tất định (Seed)</label>
-              <input type="number" id="cfg-seed" value="20260925" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-              <p class="text-[11px] text-slate-400 mt-1">Cùng seed sẽ sinh ra kết quả xáo đề giống hệt nhau 100%</p>
+              <label class="block mb-1 font-semibold text-slate-800">Mã đề bắt đầu (4 chữ số)</label>
+              <input type="text" id="cfg-exam-code-start" value="1001" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono font-bold text-slate-900" />
+              <p class="text-[11px] text-slate-400 mt-1">Mặc định 4 chữ số: 1001, 1002, 2001,...</p>
             </div>
 
             <div class="pt-2 border-t border-slate-100 space-y-2">
@@ -192,12 +186,32 @@ export function getExamMixerUiHtml() {
                 <input type="checkbox" id="cfg-shuffle-options" checked class="w-4 h-4 text-blue-600 rounded" />
                 <span>Xáo thứ tự phương án A, B, C, D (Phần I)</span>
               </label>
-
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" id="cfg-shuffle-tf" class="w-4 h-4 text-blue-600 rounded" />
-                <span>Xáo ý a, b, c, d của câu Đúng/Sai (Phần II)</span>
-              </label>
             </div>
+
+            <!-- Tùy chọn nâng cao (Collapsible Details) -->
+            <details class="pt-2 border-t border-slate-100 group">
+              <summary class="cursor-pointer text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center justify-between py-1.5 select-none">
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 transition-transform group-open:rotate-90 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                  <span>Tùy chọn nâng cao</span>
+                </span>
+                <span class="text-[10px] text-slate-400 font-normal group-open:hidden">Hạt giống Seed &amp; Ý Đúng/Sai</span>
+              </summary>
+              <div class="mt-3 space-y-3 pl-3 border-l-2 border-blue-100 text-xs">
+                <div>
+                  <label class="block mb-1 font-semibold text-slate-700">Mã hạt giống tất định (Seed)</label>
+                  <input type="number" id="cfg-seed" value="20260925" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                  <p class="text-[10px] text-slate-400 mt-1">Cùng seed sẽ sinh ra kết quả xáo đề giống hệt nhau 100%.</p>
+                </div>
+
+                <div>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="cfg-shuffle-tf" class="w-4 h-4 text-blue-600 rounded" />
+                    <span>Xáo ý a, b, c, d của câu Đúng/Sai (Phần II)</span>
+                  </label>
+                </div>
+              </div>
+            </details>
           </div>
         </div>
       </div>
@@ -329,42 +343,38 @@ export function getExamMixerUiHtml() {
             <span class="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">Sẵn sàng in ấn</span>
           </div>
 
-          <!-- Result metrics -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-6">
+          <!-- Result metrics (3 clean cards, removing Gate 3 technical jargon) -->
+          <div class="grid grid-cols-3 gap-3 text-center mb-6">
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
               <p class="text-[11px] text-slate-500">Số mã đề</p>
               <p id="res-variant-count" class="text-lg font-bold text-slate-800"></p>
             </div>
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <p class="text-[11px] text-slate-500">Số tệp DOCX</p>
+              <p class="text-[11px] text-slate-500">Số tệp Word (.docx)</p>
               <p id="res-docx-count" class="text-lg font-bold text-slate-800"></p>
             </div>
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <p class="text-[11px] text-slate-500">Kiểm định bảo mật</p>
-              <p class="text-lg font-bold text-emerald-600">PASS (Gate 3)</p>
-            </div>
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-              <p class="text-[11px] text-slate-500">Dung lượng gói</p>
+              <p class="text-[11px] text-slate-500">Dung lượng gói (.zip)</p>
               <p id="res-zip-size" class="text-lg font-bold text-slate-800"></p>
             </div>
           </div>
 
           <!-- Download Action Buttons -->
           <div class="space-y-3">
-            <button id="download-zip-btn" class="w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 transition-colors">
+            <button id="download-zip-btn" class="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 transition-colors">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-              <span>TẢI GÓI KẾT QUẢ (.ZIP)</span>
+              <span>TẢI TRỌN GÓI KẾT QUẢ (.ZIP)</span>
             </button>
 
             <div class="grid grid-cols-2 gap-3">
-              <button id="download-key-btn" class="py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-xs text-slate-700 flex items-center justify-center gap-1.5 transition-colors">
-                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span>Tải Bảng Đáp Án (JSON)</span>
+              <button id="download-excel-btn" class="py-2.5 px-3 rounded-lg border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 font-bold text-xs text-emerald-800 flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span>Tải Đáp Án (Excel .xlsx)</span>
               </button>
 
-              <button id="view-manifest-btn" class="py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-xs text-slate-700 flex items-center justify-center gap-1.5 transition-colors">
-                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                <span>Xem Hồ Sơ Manifest</span>
+              <button id="download-key-btn" class="py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-semibold text-xs text-slate-700 flex items-center justify-center gap-1.5 transition-colors">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span>Tải Đáp Án (JSON)</span>
               </button>
             </div>
           </div>
@@ -442,7 +452,7 @@ export function getExamMixerUiHtml() {
                 Cấu hình số lượng mã đề
               </div>
               <p class="text-xs text-slate-600 leading-relaxed">
-                Nhập số mã đề cần tạo (ví dụ: 4 đề), mã bắt đầu (101). Chọn hoán vị câu hỏi, hoán vị các phương án A, B, C, D hoặc giữ nguyên câu Đúng/Sai theo ý muốn.
+                Nhập số mã đề cần tạo (ví dụ: 4 đề), mã bắt đầu (1001 - 4 chữ số). Chọn hoán vị câu hỏi, hoán vị các phương án A, B, C, D hoặc mở Tùy chọn nâng cao theo ý muốn.
               </p>
             </div>
 
@@ -553,16 +563,16 @@ export function getExamMixerUiHtml() {
                 <span class="text-lg">📄</span> Đồng bộ Mã đề &amp; Đánh số trang động
               </div>
               <p class="text-xs text-slate-600 leading-relaxed">
-                Tự động điền mã đề vào khung thông tin góc trên bên phải và chân trang. Chân trang hiển thị số trang động tự động dạng: <em>Mã đề 101 - Trang 1/2</em>.
+                Tự động điền mã đề vào khung thông tin góc trên bên phải và chân trang. Chân trang hiển thị số trang động tự động dạng: <em>Mã đề 1001 - Trang 1/2</em>.
               </p>
             </div>
 
             <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-1.5">
               <div class="flex items-center gap-2 font-bold text-slate-900 text-sm">
-                <span class="text-lg">📦</span> Xuất trọn gói ZIP &amp; Ma trận đáp án
+                <span class="text-lg">📦</span> Xuất trọn gói ZIP &amp; Ma trận Excel
               </div>
               <p class="text-xs text-slate-600 leading-relaxed">
-                Tải xuống 1 tệp ZIP chứa đầy đủ các file Word đề thi từng mã, bảng ma trận đáp án chuẩn JSON và TXT để phục vụ chấm thi thủ công hoặc chấm máy quét.
+                Tải xuống 1 tệp ZIP chứa đầy đủ các file Word đề thi từng mã, bảng ma trận đáp án chuẩn Excel (.xlsx), JSON và TXT để phục vụ chấm thi thủ công hoặc chấm máy quét.
               </p>
             </div>
           </div>
@@ -614,24 +624,6 @@ export function getExamMixerUiHtml() {
     </div>
   </div>
 
-  <!-- Manifest JSON Modal -->
-  <div id="manifest-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <h3 class="font-bold text-sm text-slate-800">Hồ Sơ Manifest Đợt Trộn Đề</h3>
-        <button id="close-manifest-modal" class="text-slate-400 hover:text-slate-600 p-1">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-      <div class="p-4 overflow-y-auto flex-1 bg-slate-950 text-emerald-400 font-mono text-xs">
-        <pre id="manifest-json-content" class="whitespace-pre-wrap"></pre>
-      </div>
-      <div class="p-3 border-t border-slate-200 bg-slate-50 text-right">
-        <button id="close-manifest-modal-btn" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-lg text-xs font-semibold text-slate-700">Đóng</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Application Logic JavaScript -->
   <script>
     let currentSourceFile = null;
@@ -673,13 +665,8 @@ export function getExamMixerUiHtml() {
     const resDocxCount = document.getElementById('res-docx-count');
     const resZipSize = document.getElementById('res-zip-size');
     const downloadZipBtn = document.getElementById('download-zip-btn');
+    const downloadExcelBtn = document.getElementById('download-excel-btn');
     const downloadKeyBtn = document.getElementById('download-key-btn');
-    const viewManifestBtn = document.getElementById('view-manifest-btn');
-
-    const manifestModal = document.getElementById('manifest-modal');
-    const manifestJsonContent = document.getElementById('manifest-json-content');
-    const closeManifestModal = document.getElementById('close-manifest-modal');
-    const closeManifestModalBtn = document.getElementById('close-manifest-modal-btn');
 
     // Guide Modal Elements
     const guideModal = document.getElementById('guide-modal');
@@ -947,13 +934,10 @@ export function getExamMixerUiHtml() {
       resZipSize.textContent = (result.zipFileSize / 1024).toFixed(1) + ' KB';
 
       downloadZipBtn.onclick = () => window.location.href = '/api/jobs/' + result.jobId + '/download/zip';
+      if (downloadExcelBtn) {
+        downloadExcelBtn.onclick = () => window.location.href = '/api/jobs/' + result.jobId + '/download/excel';
+      }
       downloadKeyBtn.onclick = () => window.location.href = '/api/jobs/' + result.jobId + '/download/answer-key';
-      viewManifestBtn.onclick = async () => {
-        const mRes = await fetch('/api/jobs/' + result.jobId + '/manifest');
-        const manifest = await mRes.json();
-        manifestJsonContent.textContent = JSON.stringify(manifest, null, 2);
-        manifestModal.classList.remove('hidden');
-      };
     }
 
     function showError(code, message, techDetails, stage) {
@@ -973,9 +957,6 @@ export function getExamMixerUiHtml() {
     toggleTechDetailsBtn.addEventListener('click', () => {
       technicalDetailsContent.classList.toggle('hidden');
     });
-
-    closeManifestModal.addEventListener('click', () => manifestModal.classList.add('hidden'));
-    closeManifestModalBtn.addEventListener('click', () => manifestModal.classList.add('hidden'));
   </script>
 </body>
 </html>`;

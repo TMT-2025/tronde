@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import JSZip from "jszip";
+import { generateAnswerKeyExcel } from "./excel-generator.js";
 /**
  * Exports generated files to disk and packs them into a single deliverable ZIP package
  */
@@ -29,14 +30,21 @@ export async function executeExport(batchItems, answerKeyData, manifestData, opt
     if (!skipDiskWrite) {
         fs.writeFileSync(answerKeyPath, answerKeyStr, "utf8");
     }
-    // 3. Export EXAM_MANIFEST.json
+    // 3. Export Excel Answer Key (.xlsx)
+    const excelFileName = "DAP_AN_CAC_MA_DE.xlsx";
+    const excelPath = path.join(outputDir, excelFileName);
+    const excelBuffer = await generateAnswerKeyExcel(answerKeyData);
+    if (!skipDiskWrite) {
+        fs.writeFileSync(excelPath, excelBuffer);
+    }
+    // 4. Export EXAM_MANIFEST.json
     const manifestFileName = "EXAM_MANIFEST.json";
     const manifestPath = path.join(outputDir, manifestFileName);
     const manifestStr = JSON.stringify(manifestData, null, 2);
     if (!skipDiskWrite) {
         fs.writeFileSync(manifestPath, manifestStr, "utf8");
     }
-    // 4. Create ZIP package
+    // 5. Create ZIP package
     let zipFileName;
     let zipPath;
     let zipBuffer;
@@ -50,6 +58,8 @@ export async function executeExport(batchItems, answerKeyData, manifestData, opt
         for (const item of batchItems) {
             zip.file(`MA_DE_${item.examCode}.docx`, item.docxBytes);
         }
+        // Add Excel answer key
+        zip.file(excelFileName, excelBuffer);
         // Add JSON files
         zip.file(answerKeyFileName, answerKeyStr);
         zip.file(manifestFileName, manifestStr);
@@ -69,6 +79,9 @@ export async function executeExport(batchItems, answerKeyData, manifestData, opt
         docxPaths,
         answerKeyFileName,
         answerKeyPath,
+        excelFileName,
+        excelPath,
+        excelBuffer,
         manifestFileName,
         manifestPath,
         zipFileName,

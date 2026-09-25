@@ -12,6 +12,9 @@ export interface ExportResult {
     docxPaths: string[];
     answerKeyFileName: string;
     answerKeyPath: string;
+    excelFileName?: string;
+    excelPath?: string;
+    excelBuffer?: Uint8Array;
     manifestFileName: string;
     manifestPath: string;
     zipFileName?: string;

@@ -21,3 +21,10 @@ export declare function getJobAnswerKey(jobId: string): any;
  * Reads and returns the Manifest JSON object
  */
 export declare function getJobManifest(jobId: string): any;
+/**
+ * Reads and returns the Excel Answer Key buffer for downloading
+ */
+export declare function getJobExcelBuffer(jobId: string): {
+    buffer: Buffer;
+    fileName: string;
+};

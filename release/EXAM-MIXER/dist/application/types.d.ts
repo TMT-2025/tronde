@@ -31,8 +31,11 @@ export interface ExamJobResult {
     zipFileSize: number;
     answerKeyFileName: string;
     answerKeyFilePath: string;
+    excelFileName?: string;
+    excelFilePath?: string;
     manifestFileName: string;
-    manifestFilePath: string;
+    manifestPath: string;
+    manifestFilePath?: string;
     examCodes: string[];
     benchmarks: PipelineBenchmarkReport;
 }

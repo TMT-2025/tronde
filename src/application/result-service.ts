@@ -61,10 +61,27 @@ export function getJobAnswerKey(jobId: string): any {
 export function getJobManifest(jobId: string): any {
   const result = getJobResult(jobId);
 
-  if (!fs.existsSync(result.manifestFilePath)) {
+  const manifestPath = result.manifestPath || result.manifestFilePath;
+  if (!manifestPath || !fs.existsSync(manifestPath)) {
     throw new ResultNotFoundError(`Tệp thông số '${result.manifestFileName}' không tồn tại trên hệ thống.`);
   }
 
-  const str = fs.readFileSync(result.manifestFilePath, "utf8");
+  const str = fs.readFileSync(manifestPath, "utf8");
   return JSON.parse(str);
+}
+
+/**
+ * Reads and returns the Excel Answer Key buffer for downloading
+ */
+export function getJobExcelBuffer(jobId: string): { buffer: Buffer; fileName: string } {
+  const result = getJobResult(jobId);
+
+  if (!result.excelFilePath || !fs.existsSync(result.excelFilePath)) {
+    throw new ResultNotFoundError(
+      `Tệp đáp án Excel '${result.excelFileName || "DAP_AN_CAC_MA_DE.xlsx"}' không tồn tại trên hệ thống.`
+    );
+  }
+
+  const buffer = fs.readFileSync(result.excelFilePath);
+  return { buffer, fileName: result.excelFileName || "DAP_AN_CAC_MA_DE.xlsx" };
 }
