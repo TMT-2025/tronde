@@ -117,7 +117,7 @@ export function getExamMixerUiHtml(): string {
             </div>
             <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-center gap-2">
               <span class="text-base">📊</span>
-              <span class="text-[11px] font-medium text-slate-200">Ma trận Excel ngang</span>
+              <span class="text-[11px] font-medium text-slate-200">Xuất đáp án excel</span>
             </div>
             <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs flex items-center gap-2">
               <span class="text-base">⚡</span>
@@ -419,7 +419,7 @@ export function getExamMixerUiHtml(): string {
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button id="download-excel-btn" class="py-3 px-4 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 cursor-pointer">
                 <svg class="w-4 h-4 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span>Tải Ma Trận Đáp Án (Excel .xlsx)</span>
+                <span>Xuất đáp án Excel (.xlsx)</span>
               </button>
 
               <button id="download-key-btn" class="py-3 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 font-bold text-xs text-slate-700 flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer">
