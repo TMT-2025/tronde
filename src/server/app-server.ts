@@ -1,4 +1,6 @@
 import * as http from "http";
+import * as fs from "fs";
+import * as path from "path";
 import { getExamMixerUiHtml } from "../ui/exam-mixer-ui.js";
 import {
   validateUploadedDocx,
@@ -159,6 +161,33 @@ export async function handleExamMixerRequest(req: http.IncomingMessage, res: htt
       if (req.method === "GET" && pathname === "/api/health") {
         res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
         res.end(JSON.stringify({ status: "ok", version: "1.0.0", timestamp: new Date().toISOString() }));
+        return;
+      }
+
+      // 1.1 Sample Exam Download (for first-time users)
+      if (req.method === "GET" && pathname === "/api/sample-exam") {
+        const candidatePaths = [
+          path.resolve(process.cwd(), "DeGocTron.docx"),
+          path.resolve(process.cwd(), "tests/fixtures/DeGocTron.docx")
+        ];
+        let sampleBuf: Buffer | null = null;
+        for (const p of candidatePaths) {
+          if (fs.existsSync(p)) {
+            sampleBuf = fs.readFileSync(p);
+            break;
+          }
+        }
+        if (sampleBuf) {
+          res.writeHead(200, {
+            "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "Content-Disposition": 'attachment; filename="DeThiMau_ChuongEsterLipid.docx"',
+            "Content-Length": sampleBuf.byteLength
+          });
+          res.end(sampleBuf);
+        } else {
+          res.writeHead(404, { "Content-Type": "application/json; charset=utf-8" });
+          res.end(JSON.stringify({ error: "ERR_SAMPLE_NOT_FOUND", message: "Tệp đề mẫu không tồn tại." }));
+        }
         return;
       }
 
