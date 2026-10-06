@@ -218,9 +218,23 @@ export function getExamMixerUiHtml() {
             </div>
 
             <div>
-              <label class="block mb-1.5 font-bold text-slate-800">Mã đề bắt đầu (4 chữ số)</label>
-              <input type="text" id="cfg-exam-code-start" value="1001" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none font-mono font-bold text-blue-700 text-sm transition-all" />
-              <p class="text-[11px] text-slate-400 mt-1">Mặc định 4 chữ số: 1001, 1002, 2001,...</p>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="font-bold text-slate-800">Mã đề bắt đầu</label>
+                <!-- Quick format selector pills: 3 digits or 4 digits -->
+                <div class="inline-flex p-0.5 rounded-lg bg-slate-100 border border-slate-200 text-[11px] font-semibold" id="exam-code-digits-toggle">
+                  <button type="button" id="btn-digits-3" class="px-2.5 py-0.5 rounded-md transition-all text-slate-600 hover:text-slate-900 cursor-pointer">
+                    3 chữ số
+                  </button>
+                  <button type="button" id="btn-digits-4" class="px-2.5 py-0.5 rounded-md transition-all bg-white text-blue-600 shadow-xs cursor-pointer font-bold">
+                    4 chữ số
+                  </button>
+                </div>
+              </div>
+              <input type="text" id="cfg-exam-code-start" value="1001" maxlength="6" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none font-mono font-bold text-blue-700 text-sm transition-all" />
+              <div class="flex items-center justify-between mt-1 text-[11px] text-slate-400">
+                <span id="exam-code-hint">Chuẩn 4 chữ số (VD: 1001, 1002...)</span>
+                <span class="text-[10px] text-slate-400">Tùy ý gõ số khác</span>
+              </div>
             </div>
 
             <div class="pt-2 border-t border-slate-100 space-y-2.5">
@@ -502,7 +516,7 @@ export function getExamMixerUiHtml() {
                 Cấu hình số lượng mã đề
               </div>
               <p class="text-xs text-slate-600 leading-relaxed">
-                Nhập số mã đề cần tạo (ví dụ: 4 đề), mã bắt đầu (1001 - 4 chữ số). Chọn hoán vị câu hỏi, hoán vị các phương án A, B, C, D hoặc mở Tùy chọn nâng cao theo ý muốn.
+                Nhập số mã đề cần tạo (ví dụ: 4 đề), chọn chuẩn mã đề 3 chữ số (101...) hoặc 4 chữ số (1001...). Chọn hoán vị câu hỏi, hoán vị các phương án A, B, C, D hoặc mở Tùy chọn nâng cao theo ý muốn.
               </p>
             </div>
 
@@ -880,6 +894,58 @@ export function getExamMixerUiHtml() {
       } else {
         warningsContainer.classList.add('hidden');
       }
+    }
+
+    // Format selector for Exam Code (3 digits vs 4 digits)
+    const btnDigits3 = document.getElementById('btn-digits-3');
+    const btnDigits4 = document.getElementById('btn-digits-4');
+    const examCodeInput = document.getElementById('cfg-exam-code-start');
+    const examCodeHint = document.getElementById('exam-code-hint');
+
+    function updateDigitsToggleUI(digits) {
+      if (!btnDigits3 || !btnDigits4 || !examCodeHint) return;
+      if (digits === 3) {
+        btnDigits3.className = 'px-2.5 py-0.5 rounded-md transition-all bg-white text-blue-600 shadow-xs cursor-pointer font-bold';
+        btnDigits4.className = 'px-2.5 py-0.5 rounded-md transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+        examCodeHint.textContent = 'Chuẩn 3 chữ số (VD: 101, 102, 201...)';
+      } else {
+        btnDigits4.className = 'px-2.5 py-0.5 rounded-md transition-all bg-white text-blue-600 shadow-xs cursor-pointer font-bold';
+        btnDigits3.className = 'px-2.5 py-0.5 rounded-md transition-all text-slate-600 hover:text-slate-900 cursor-pointer';
+        examCodeHint.textContent = 'Chuẩn 4 chữ số (VD: 1001, 1002, 2001...)';
+      }
+    }
+
+    if (btnDigits3 && btnDigits4 && examCodeInput) {
+      btnDigits3.addEventListener('click', () => {
+        let val = examCodeInput.value.trim();
+        let num = parseInt(val, 10);
+        if (isNaN(num) || num >= 1000) {
+          examCodeInput.value = '101';
+        } else {
+          examCodeInput.value = String(num).padStart(3, '0').slice(-3);
+        }
+        updateDigitsToggleUI(3);
+      });
+
+      btnDigits4.addEventListener('click', () => {
+        let val = examCodeInput.value.trim();
+        let num = parseInt(val, 10);
+        if (isNaN(num) || num < 1000) {
+          examCodeInput.value = '1001';
+        } else {
+          examCodeInput.value = String(num).padStart(4, '0');
+        }
+        updateDigitsToggleUI(4);
+      });
+
+      examCodeInput.addEventListener('input', () => {
+        const val = examCodeInput.value.trim();
+        if (val.length === 3) {
+          updateDigitsToggleUI(3);
+        } else if (val.length >= 4) {
+          updateDigitsToggleUI(4);
+        }
+      });
     }
 
     // 2. Template file upload (optional)

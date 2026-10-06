@@ -68,4 +68,31 @@ describe("TEST-RENDER-007: Rich Text & Chemistry Subscript Fidelity", () => {
 
     expect(sub102).toBe(sub101);
   });
+
+  it("should validate clean pass without error when source exam has no subscripts (e.g. Math or English exams)", async () => {
+    const { validateRenderedDocx } = await import("../../src/core/validation/render-validator.js");
+    // Clone variant 101 and strip all subscript annotations to simulate a non-chemistry exam
+    const nonSubscriptVariant: VariantExamResult = JSON.parse(JSON.stringify(v101Result));
+    for (const sec of nonSubscriptVariant.variantExam.sections) {
+      for (const q of sec.questions) {
+        for (const p of q.stem.paragraphs) {
+          p.runs.forEach(r => { if (r.vertAlign === "subscript") delete r.vertAlign; });
+        }
+        if (q.options) {
+          for (const opt of q.options) {
+            for (const p of opt.content.paragraphs) {
+              p.runs.forEach(r => { if (r.vertAlign === "subscript") delete r.vertAlign; });
+            }
+          }
+        }
+      }
+    }
+
+    const docxBytes = await renderExamToDocx(nonSubscriptVariant);
+    const report = await validateRenderedDocx(docxBytes, nonSubscriptVariant);
+
+    expect(report.issues.some(i => i.code === "VAL-FMT-NO-SUBSCRIPTS")).toBe(false);
+    expect(report.isValid).toBe(true);
+    expect(report.totalErrors).toBe(0);
+  });
 });

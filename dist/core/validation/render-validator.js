@@ -1,6 +1,59 @@
 import JSZip from "jszip";
 import { DOMParser } from "@xmldom/xmldom";
 import { getChildrenByLocalName, getFirstChildByLocalName, getDescendantsByLocalName, getElementTextContent } from "../parser/xml-utils.js";
+/**
+ * Counts the expected vertAlign='subscript' runs across all sections, questions, and options in ExamIR
+ */
+export function countExpectedSubscripts(exam) {
+    if (!exam || !exam.sections)
+        return 0;
+    let count = 0;
+    for (const section of exam.sections) {
+        if (!section.questions)
+            continue;
+        for (const q of section.questions) {
+            if (q.stem?.paragraphs) {
+                for (const p of q.stem.paragraphs) {
+                    if (p.runs) {
+                        for (const r of p.runs) {
+                            if (r.vertAlign === "subscript")
+                                count++;
+                        }
+                    }
+                }
+            }
+            if (q.options) {
+                for (const opt of q.options) {
+                    if (opt.content?.paragraphs) {
+                        for (const p of opt.content.paragraphs) {
+                            if (p.runs) {
+                                for (const r of p.runs) {
+                                    if (r.vertAlign === "subscript")
+                                        count++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (q.subItems) {
+                for (const item of q.subItems) {
+                    if (item.content?.paragraphs) {
+                        for (const p of item.content.paragraphs) {
+                            if (p.runs) {
+                                for (const r of p.runs) {
+                                    if (r.vertAlign === "subscript")
+                                        count++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
 export async function validateRenderedDocx(docxBuffer, expectedVariant) {
     const issues = [];
     const expectedExamCode = expectedVariant.metadata.examCode;
@@ -155,6 +208,7 @@ export async function validateRenderedDocx(docxBuffer, expectedVariant) {
     // 13. Answer Leakage Scan
     // Scan all runs inside paragraphs (excluding the header table) for underline
     let hasAnswerLeakage = false;
+    let inShortAnswerSection = false;
     for (const p of paragraphs) {
         const runs = getChildrenByLocalName(p, "r");
         for (const r of runs) {
@@ -176,14 +230,26 @@ export async function validateRenderedDocx(docxBuffer, expectedVariant) {
                 }
             }
         }
-        // Check for short answer expected values leaked as answer lines (e.g. "^A\. 200")
         const pText = getElementTextContent(p).trim();
-        if (pText.match(/^A[\.:\)]\s*(200|0\.92|3|5\.28|88\.4|1170)$/)) {
+        if (pText.includes("PHẦN III") || pText.includes("PHẦN 3")) {
+            inShortAnswerSection = true;
+        }
+        // Direct answer label leak: "Trả lời: ..." or "Đáp án: ..."
+        if (pText.match(/^(?:Trả lời|Đáp án)[\.:\)]/i)) {
             hasAnswerLeakage = true;
             issues.push({
                 code: "VAL-LEAKAGE-SHORT-ANSWER",
                 severity: "CRITICAL",
-                message: `Answer leakage detected: Short answer key line found '${pText}'`
+                message: `Answer leakage detected: Direct answer line found '${pText}'`
+            });
+        }
+        // In short answer section, any answer key line like "A. 200" or "A. <value>" is answer leakage
+        if (inShortAnswerSection && pText.match(/^A[\.:\)]\s*(200|0\.92|3|5\.28|88\.4|1170|\d+(?:[.,]\d+)?)$/)) {
+            hasAnswerLeakage = true;
+            issues.push({
+                code: "VAL-LEAKAGE-SHORT-ANSWER",
+                severity: "CRITICAL",
+                message: `Answer leakage detected: Short answer key line found in student exam '${pText}'`
             });
         }
     }
@@ -198,11 +264,13 @@ export async function validateRenderedDocx(docxBuffer, expectedVariant) {
         if (val === "superscript")
             superscriptCount++;
     }
-    if (subscriptCount === 0) {
+    const expectedSubscripts = countExpectedSubscripts(expectedVariant.variantExam);
+    // Only report missing subscripts if the source exam actually had subscripts!
+    if (expectedSubscripts > 0 && subscriptCount === 0) {
         issues.push({
             code: "VAL-FMT-NO-SUBSCRIPTS",
             severity: "ERROR",
-            message: "Chemical formulas appear to have lost their subscript formatting"
+            message: `Chemical formulas appear to have lost their subscript formatting (expected: ${expectedSubscripts}, rendered: 0)`
         });
     }
     const errors = issues.filter(i => i.severity === "CRITICAL" || i.severity === "ERROR").length;

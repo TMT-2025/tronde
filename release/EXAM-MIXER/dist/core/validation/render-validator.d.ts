@@ -1,4 +1,5 @@
 import { VariantExamResult } from "../mixer/variant-generator.js";
+import { ExamIR } from "../ir/types.js";
 export interface RenderValidationIssue {
     code: string;
     severity: "INFO" | "WARNING" | "ERROR" | "CRITICAL";
@@ -24,4 +25,8 @@ export interface RenderValidationReport {
         hasAnswerLeakage: boolean;
     };
 }
+/**
+ * Counts the expected vertAlign='subscript' runs across all sections, questions, and options in ExamIR
+ */
+export declare function countExpectedSubscripts(exam?: ExamIR): number;
 export declare function validateRenderedDocx(docxBuffer: Buffer | Uint8Array, expectedVariant: VariantExamResult): Promise<RenderValidationReport>;
